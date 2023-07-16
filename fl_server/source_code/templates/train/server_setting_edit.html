@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div class='card m-3'>
+    <div class='card-body m-2'>
+        <h2 style='font-weight: bold !important;'>Server Setting</h2>
+        <div class='form-control row form'>
+            {% csrf_token %}
+            <div class='col-12'>
+                <div class='col-3'>
+                    <label for="name">Server name:</label>
+                </div>
+
+                <div class='col-9'>
+                    <input type="text" id="name" name="name" value="{{servers.name}}">
+                </div>
+            </div>
+
+            <div class='col-12'>
+                <div class='col-3'>
+                    <label for="ip_address">Ip Address:</label>
+                </div>
+
+                <div class='col-9'>
+                    <input type="text" id="ip_address" name="ip_address" value="{{servers.ip_address}}">
+                </div>
+            </div>
+
+            <div class='col-12'>
+                <div class='col-3'>
+                    <label for="is_active">Active status:</label>
+                </div>
+
+                <div class='col-9'>
+                    <select name="cars" id="active">
+                        <option {% if servers.is_active == 'True' %}selected{% endif %} value="1">Active</option>
+                        <option {% if servers.is_active == 'False' %}selected{% endif %} value="0">Inactive</option>
+                    </select>
+                </div>
+            </div>
+
+            <button 
+            class='btn border shadow-sm mt-3 bg-light border' style='width:200px !important; background-color: gray !important; color:white !important;' 
+            type="submit" onclick='get_data_form()' value="Submit">Submit</button>
+            <span class='text-danger' id='message'></span>
+        </div>
+    </div>
+</div>
+
+<script>
+  function get_data_form() {
+      var name = $('#name').val();
+      var ip_address = $('#ip_address').val();
+      var active = $('#active').val();
+
+      var param = {
+          'name' : name,
+          'ip_address' : ip_address,
+          'active' : active,
+      }
+      ajax_request(param);
+  }
+
+  function ajax_request(param={}) {
+      $.ajax({
+          type: "POST",
+          headers: {
+              'X-CSRFToken': '{{csrf_token}}'
+          },
+          dataType: "json",
+          url: "{% url 'server:server_setting_edit' %}",
+          data: {
+              'params': JSON.stringify(param)
+          },
+          success: function(para) {
+              console.log(para);
+          },
+          error: function(para) {
+              console.log(para)
+          }
+      });
+      window.location.href = `{% url 'server:train_setting_index' %}`;
+
+  }
+
+</script>
+
+{% endblock %}

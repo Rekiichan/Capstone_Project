@@ -114,8 +114,38 @@ class TrainSetting(TemplateView):
         context = super().get_context_data(**kwargs)
         context['settings'] = self._get_setting_train()
         context['server'] = self._get_server_info()
-        print(context['server'])
         return context
+
+class ServerSettingEdit(TemplateView):
+    template_name = "train/server_setting_edit.html"
+
+    def _get_server_info(self):
+        server_info = ServerHubspot.objects.filter().first()
+        data_object = {}
+        data_object['id'] = server_info.id
+        data_object['name'] = server_info.name
+        data_object['ip_address'] = server_info.ip_address
+        data_object['is_active'] = server_info.is_active
+        return data_object
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['servers'] = self._get_server_info()
+        return context
+    
+    def post(self,request):
+        params = json.loads(request.POST.get('params'))
+        param_name = params.get('name')
+        param_ip_address = params.get('ip_address')
+        param_active = True if params.get('active') == '1' else False
+
+        server_info = ServerHubspot.objects.filter().first()
+        server_info.name = param_name
+        server_info.ip_address = param_ip_address
+        server_info.is_active = param_active
+        server_info.save()
+
+        return HttpResponse('OK')
 
 class TrainSettingEdit(TemplateView):
     template_name = "train/setting_edit.html"
