@@ -1,5 +1,7 @@
 from pathlib import Path
+import environ
 import os
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -9,11 +11,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-l9@1smwy#hwpu)%vko^#-2-ef5ntvs79!4hwhuhw1ylc6ckxx5'
 
+env = environ.Env()
+environ.Env.read_env(os.path.join(BASE_DIR.parent, '.env'))
+
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = [env('ALLOWED_HOSTS')]
 
 # Application definition
 
@@ -65,11 +69,11 @@ WSGI_APPLICATION = 'fl_server.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', 
-        'NAME': 'fdhealth',
-        'USER': 'root',
-        'PASSWORD': 'vangdoan2',
-        'HOST': 'fdhealth.site',
-        'PORT': '8200',
+        'NAME': env('DATABASE_NAME'),
+        'USER': env('DATABASE_USER'),
+        'PASSWORD': env('DATABASE_PASS'),
+        'HOST': env('DATABASE_HOST'),
+        'PORT': env('DATABASE_PORT'),
     }
 }
 
