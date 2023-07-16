@@ -4,7 +4,7 @@ from . import views
 app_name = 'server'
 
 urlpatterns = [
-    path('index', views.Home.as_view(), name='index'),
+    path('', views.Home.as_view(), name='index'),
 
     # client action
     path('login', views.Login.as_view(), name='login'),

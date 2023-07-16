@@ -26,7 +26,14 @@ class Home(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
+
+class ClientManagement(TemplateView):
+    template_name = ''
     
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
 class Login(TemplateView):
     template_name = "auth/login.html"
 
@@ -62,8 +69,6 @@ def DetailClient(request):
 
 def RemoveClient(request):
     pass
-
-
 
 class AggregatedModel(APIView):
     def post(self,request):
