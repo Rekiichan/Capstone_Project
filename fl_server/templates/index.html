@@ -12,8 +12,8 @@
       type="button" onclick=predict()>Upload</button>
     </form>
   </div>
+  <h2 id='result-predict' style='color: black !important;' class='m-3'></h2>
 </div>
-<h2 id='result' style='color: black !important;' class='m-3'>asd</h2>
 
 <script>
   function predict() {
@@ -25,16 +25,12 @@
       headers: {
           'X-CSRFToken': '{{csrf_token}}'
       },
-      cache : false,
       processData: false,
       contentType: false,
       url: `{% url 'server:predict' %}`,
       data: formData,
       success: function(para) {
-        console.log('asd',para)
-        $("#result").val(para.toString());
-        console.log($('#result').val());
-        console.log($("#result"))
+        $("#result-predict").text(`Result: ${para}`);
       }
     });
   }
