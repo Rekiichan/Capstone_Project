@@ -18,20 +18,16 @@
       </div>
 
     <button class='btn border shadow-sm mt-3 bg-secondary border' onclick='request_train()' 
-    style='background-color: gray !important; color:white !important;'>
+    style='background-color: gray !important; color:white !important;' id='loading'>
       Start
     </button>
   </div>
+  <span class='m-3' id='wating' style='display:none'>Training in processing, please wait .....</span>
 </div>
 
 
 
 <script>
-
-  const spinner = `<div class="spinner-border" role="status">
-                    <span class="sr-only">Loading...</span>
-                  </div>`
-
   function request_train() {
       var training_number = $('#training_number').val();
       console.log(training_number);
@@ -43,6 +39,7 @@
   }
 
   function ajax_request_train(param={}) {
+      disableElement();
       $.ajax({
           type: "POST",
           headers: {
@@ -55,21 +52,21 @@
               'params': JSON.stringify(param)
           },
           success: function(para) {
-            assert(value['Training success'])
+            enableElement();
           },
           error: function(para) {
-            assert(value['Training Fail'])
           }
       });
   }
 
-  function disableElement(id) {
-    $(`#${id}`).disabled = true;
-    $(`#${id}`).html = spinner;
+  function disableElement() {
+    $('#loading').prop('disabled', true);
+    $("#wating").css("display", "block");
   }
 
   function enableElement(id) {
-    $(`#${id}`).disabled = false;
+    $('#loading').prop('disabled', false);
+    $("#wating").css("display", "none");
   }
 </script>
 {% endblock %}
