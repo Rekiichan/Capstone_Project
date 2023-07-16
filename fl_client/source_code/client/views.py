@@ -14,7 +14,7 @@ from client.handle_view.predict import predict
 def get_url_server_center_info():
   server_center = ServerHubspot.objects.filter().first()
   if server_center:
-    url = 'http://' + server_center.ip_address +":" +server_center.port
+    url = f'{server_center.ip_address}'
 
 def send_file_via_api(file_path, api_url):
   with open(file_path, 'rb') as file:
