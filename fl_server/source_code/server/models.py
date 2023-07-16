@@ -2,7 +2,7 @@ from django.db import models
 
 class ServerHubspot(models.Model):
     name = models.CharField(verbose_name='name', max_length=150)
-    ip_address = models.CharField(verbose_name='ip_address', max_length=50)
+    ip_address = models.CharField(verbose_name='ip_address', max_length=200)
     port = models.CharField(verbose_name='port', max_length=10)
     created_date = models.DateField(verbose_name='created_date', auto_now_add=True)
     is_deleted = models.BooleanField(default=True)
@@ -26,7 +26,7 @@ class TrainInfo(models.Model):
 
 class ClientHubspot(models.Model):
     name = models.CharField(verbose_name='name', max_length=150)
-    ip_address = models.CharField(verbose_name='ip_address', max_length=50)
+    ip_address = models.CharField(verbose_name='ip_address', max_length=200)
     port = models.CharField(verbose_name='port', max_length=10)
     created_date = models.DateField(verbose_name='created_date', auto_now_add=True)
     is_deleted = models.BooleanField(default=False)
