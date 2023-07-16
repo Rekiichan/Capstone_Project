@@ -28,8 +28,8 @@ class Home(TemplateView):
         return context
 
 class ClientManagement(TemplateView):
-    template_name = ''
-    
+    template_name = 'client/list.html'
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context

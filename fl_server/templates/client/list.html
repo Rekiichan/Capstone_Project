@@ -2,4 +2,11 @@
 
 {% block body %}
 
-{% endblock body %}
+<h6><a href=" {% url 'server:add_client' %} ">Add client</a></h6>
+<h6><a href=" {% url 'server:edit_client' %} ">Edit client</a></h6>
+<h6><a href=" {% url 'server:detail_client' %} ">Detail client</a></h6>
+<h6><a href=" {% url 'server:remove_client' %} ">Remove client</a></h6>
+
+{% include 'client/js_client.html' %}
+
+{% endblock %}
