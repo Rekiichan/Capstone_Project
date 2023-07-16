@@ -64,11 +64,9 @@ def AddClient(request):
         if action == 'add_new_client':
             data = json.loads(request.POST.get('params'))
             ip_address = data.get('ip_address')
-            port = data.get('port')
             name = data.get('name')
             created = ClientHubspot.objects.create(
                 ip_address = ip_address,
-                port = port,
                 name = name
             )
             if created:        

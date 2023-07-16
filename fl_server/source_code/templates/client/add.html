@@ -6,28 +6,28 @@
         <h2 style='font-weight: bold !important;'>Add client</h2>
         <div class='form-control row form'>
             {% csrf_token %}
-            <div class='col-12'>
+            <div class='col-12 my-1'>
                 <div class='col-3'>
                     <label for="name">Name:</label>
                 </div>
 
                 <div class='col-9'>
-                    <input type="text" id="name" name="name">
+                    <input type="text" id="name" name="name" style='width: 300px;' placeholder="Bệnh viện đa khoa đà nẵng">
                 </div>
             </div>
 
-            <div class='col-12'>
+            <div class='col-12 my-1'>
                 <div class='col-3'>
                     <label for="ip_address">Ip Address:</label>
                 </div>
 
                 <div class='col-9'>
-                    <input type="text" id="ip_address" name="ip_address">
+                    <input type="text" id="ip_address" name="ip_address" style='width: 300px;' placeholder="http://benhviendakhoa.com">
                 </div>
             </div>
 
             <input style='width:200px !important;' 
-            class='btn border shadow-sm mt-3 bg-light border' type="submit" onclick='get_data_form()' value="Submit">
+            class='btn border shadow-sm mt-2 ms-3 bg-light border' type="submit" onclick='get_data_form()' value="Submit">
             <span class='text-danger' id='message'></span>
         </div>
     </div>
