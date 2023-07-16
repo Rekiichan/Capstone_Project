@@ -47,7 +47,7 @@ function flapi_web_step_2_build_image() {
   show_msg_text "[STEP 2/3]: Build image"
   call_flapi_web_get_source_code_path
 
-  docker build -f Dockerfile.apiweb.local "${SOURCE_CODE_PATH}" -t ${DOCKER_API_WEB_IMAGE_NAME} --no-cache
+  docker build -f Dockerfile.apiweb.local "${SOURCE_CODE_PATH}" -t c9vioet/${DOCKER_API_WEB_IMAGE_NAME} --no-cache
   check_exists_docker_image_by_name ${DOCKER_API_WEB_IMAGE_NAME}
 
   if (($? == 1)); then
