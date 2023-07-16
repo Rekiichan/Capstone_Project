@@ -2,5 +2,42 @@
 
 {% block body %}
 
+<div class='card m-3'>
+  <div class='card-body m-3'>
+    <h2 class='mb-3'>BREAST CANCER DIAGNOSIS APPLICATION</h2>
+    <form enctype="multipart/form-data">
+      <input class='btn border shadow-sm mt-3 bg-light border' style='background-color: gray !important; color:white !important;' 
+      type="file" name="file" id='file-input'>
+      <button class='btn border shadow-sm mt-3 bg-light border' style='background-color: gray !important; color:white !important;'
+      type="button" onclick=predict()>Upload</button>
+    </form>
+  </div>
+</div>
+<h2 id='result' style='color: black !important;' class='m-3'>asd</h2>
+
+<script>
+  function predict() {
+    var formData = new FormData();
+    var fileInput = $('#file-input')[0];
+    formData.append('file', fileInput.files[0]);
+    $.ajax({
+      type: "POST",
+      headers: {
+          'X-CSRFToken': '{{csrf_token}}'
+      },
+      cache : false,
+      processData: false,
+      contentType: false,
+      url: `{% url 'server:predict' %}`,
+      data: formData,
+      success: function(para) {
+        console.log('asd',para)
+        $("#result").val(para.toString());
+        console.log($('#result').val());
+        console.log($("#result"))
+      }
+    });
+  }
+</script>
 
 {% endblock %}

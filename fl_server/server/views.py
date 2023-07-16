@@ -288,10 +288,10 @@ class AggregatedModel(APIView):
         
         return Response(status=status.HTTP_200_OK)
         
-class Predict(APIView):
+class Predict(TemplateView):
     def post(self,request):
         if 'file' not in request.FILES:
-            return Response(data='No file uploaded.',status=status.HTTP_400_BAD_REQUEST)
+            return HttpResponse('No file uploaded')
         
         file = request.FILES['file']
         if file:
@@ -302,6 +302,6 @@ class Predict(APIView):
                     destination.write(chunk)
         path = os.path.join(Path(__file__).resolve().parent.parent,GLOBAL_MODEL_PATH)
         result = predict(path,f"{PREDICT_PATH}/file.png")
-        return Response(data=result,status=status.HTTP_200_OK)
+        return HttpResponse(result)
 
 
