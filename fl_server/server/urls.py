@@ -9,7 +9,7 @@ urlpatterns = [
     path('login', views.Login.as_view(), name='login'),
 
     # client ClientManagement
-    path('client', views.AddClient, name='client_index'),
+    path('client', views.ClientManagement.as_view(), name='client_index'),
     path('client/add', views.AddClient, name='add_client'),
     path('client/edit/<pk>', views.EditClient, name='edit_client'),
     path('client/detail/<pk>', views.DetailClient, name='detail_client'),

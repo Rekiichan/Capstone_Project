@@ -2,11 +2,82 @@
 
 {% block body %}
 
-<h6><a href=" {% url 'server:add_client' %} ">Add client</a></h6>
+
+{% comment %} <h6><a href=" {% url 'server:add_client' %} ">Add client</a></h6>
 <h6><a href=" {% url 'server:edit_client' %} ">Edit client</a></h6>
 <h6><a href=" {% url 'server:detail_client' %} ">Detail client</a></h6>
-<h6><a href=" {% url 'server:remove_client' %} ">Remove client</a></h6>
+<h6><a href=" {% url 'server:remove_client' %} ">Remove client</a></h6> {% endcomment %}
 
-{% include 'client/js_client.html' %}
+<div class='card m-3'>
+  <div class='card-body m-3'>
+    <div class='row'>
+      <div class='col-12'>
+        <h2 class='col-3'>Client Management</h2>
+        <button type='button' class='col-9 float-end btn btn-secondary bg-secondary'>
+          <a href="{% url 'server:add_client' %}" class='float-end'>Add client</a>
+        </button>
+      </div>
+    </div>
+    <table class='table table-hover'>
+      <thead class='table-primary p-1' style='background-color: gray !important;'>
+        <tr>
+          <th>
+            No
+          </th>
+          <th>
+            Unit Name
+          </th>
+          <th>
+            Host Ip
+          </th>
+          <th>
+            Port
+          </th>
+          <th>
+            Created Date
+          </th>
+          <th>
+            Is Active
+          </th>
+          <th>
+            Action
+          </th>
+        </tr>
+      </thead>
+      {% for client in list_client %}
+        <tbody>
+          <tr>
+            <td>{{forloop.counter}}</td>
+            <td>{{client.name}}</td>
+            <td>{{client.ip_address}}</td>
+            <td>{{client.port}}</td>
+            <td>{{client.created_date}}</td>
+            
+            {% if client.is_active == True %}
+              <td><div class="badge bg-success">Active</div></td>
+            {% else %}
+              <td><div class="badge bg-danger">Inactive</div></td>
+            {% endif %}
+            <td>
+
+              <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                  Action
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                  <li><a class="dropdown-item" href="#">Edit</a></li>
+                  <li><a class="dropdown-item" href="#">Detail</a></li>
+                </ul>
+              </div>
+
+            </td>
+          </tr>
+        </tbody>
+
+      {% endfor %}
+        
+    </table>
+  </div>
+</div>
 
 {% endblock %}

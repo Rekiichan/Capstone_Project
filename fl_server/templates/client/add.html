@@ -42,7 +42,6 @@
         </div>
     </div>
 </div>
-
 <script>
     function get_data_form() {
         var ip_address = $('#ip_address').val();
@@ -70,11 +69,16 @@
                 'params': JSON.stringify(param)
             },
             success: function(para) {
+                console.log(para);
             },
             error: function(para) {
+                console.log(para)
             }
         });
+        console.log(123)
+        window.location.href = `{% url 'server:client_index' %}`;
     }
+
 </script>
 
 {% endblock %}

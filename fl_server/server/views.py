@@ -20,6 +20,9 @@ from server.handle_function.server_running import predict
 from server.handle_function.handle_view import send_file_via_api
 from server.utils.models import create_cnn_model
 
+class Login(TemplateView):
+    template_name = "auth/login.html"
+
 class Home(TemplateView):
     template_name = "index.html"
 
@@ -30,12 +33,27 @@ class Home(TemplateView):
 class ClientManagement(TemplateView):
     template_name = 'client/list.html'
 
+    def _get_client_data(self):
+        list_client = []
+        list_client_objects = ClientHubspot.objects.filter(is_deleted=0)
+        for client in list_client_objects:
+            data_object = {}
+            data_object['id'] = client.id
+            data_object['name'] = client.name
+            data_object['ip_address'] = client.ip_address
+            data_object['port'] = client.port
+            data_object['created_date'] = client.created_date
+            data_object['is_active'] = client.is_active
+
+            list_client.append(data_object)
+            
+        return list_client
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['list_client'] = self._get_client_data()
         return context
 
-class Login(TemplateView):
-    template_name = "auth/login.html"
 
 def AddClient(request):
     if request.method == 'GET':
@@ -48,7 +66,7 @@ def AddClient(request):
             ip_address = data.get('ip_address')
             port = data.get('port')
             name = data.get('name')
-            created = ServerHubspot.objects.create(
+            created = ClientHubspot.objects.create(
                 ip_address = ip_address,
                 port = port,
                 name = name
