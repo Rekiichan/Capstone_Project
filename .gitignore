@@ -1,10 +1,13 @@
 *.pyc
 # fl_client/client/dataset/train/*
 # fl_client/client/dataset/valid/*
-fl_client/client/model_from_server/*
-fl_client/client/model_send_to_server/*
+# fl_client/client/model_from_server/*
+# fl_client/client/model_send_to_server/*
 
-fl_server/log/*
-fl_server/model_from_client/*
+# fl_server/log/*
+# fl_server/model_from_client/*
 
 .env
+*.pt
+*.pkl
+*.zip

@@ -30,6 +30,8 @@ class TrainLocal(APIView):
     
     file = request.FILES['file']
     if file:
+      if not os.path.exists(PATH_FROM_SERVER):
+        os.mkdir(PATH_FROM_SERVER)
       with open(MODEL_FROM_SERVER, 'wb') as destination:
         for chunk in file.chunks():
             destination.write(chunk)
@@ -39,6 +41,8 @@ class TrainLocal(APIView):
     except Exception as exc:
       return Response(data=str(exc),status=status.HTTP_400_BAD_REQUEST)
     else:
+      if not os.path.exists(PATH_SEND_TO_SERVER):
+        os.mkdir(PATH_SEND_TO_SERVER)
       with zipfile.ZipFile(ZIP_SEND_TO_SERVER,mode="a") as archive:
         archive.write(f"{PATH_SEND_TO_SERVER}/eval_list.pkl")
         archive.write(f"{PATH_SEND_TO_SERVER}/model.pt")

@@ -85,24 +85,27 @@ class AggregatedModel(APIView):
         for round in range(1, training_round + 1):
             for client in list_client:
                 api_url = 'http://' + client.ip_address + ":" + client.port + '/train-request'
-                response = send_file_via_api(MODEL_INIT_SERVER, api_url)
-                
-                file_path = f'{MODEL_FROM_CLIENT}/result_{client_counter}.zip'
+                response = send_file_via_api(GLOBAL_MODEL_PATH, api_url)
+ 
+                # save updated model send from client               
+                if not os.path.exists(PATH_MODEL_FROM_CLIENT):
+                    os.mkdir(PATH_MODEL_FROM_CLIENT)
+                file_path = f'{PATH_MODEL_FROM_CLIENT}/result_{client_counter}.zip'
                     
                 with open(file_path, 'wb') as file:
                     file.write(response.content)
                 
                 # extract
-                with zipfile.ZipFile(f"{MODEL_FROM_CLIENT}/result_{client_counter}.zip", 'r') as zip_ref:
-                    zip_ref.extractall(f"{MODEL_FROM_CLIENT}")
+                with zipfile.ZipFile(f"{PATH_MODEL_FROM_CLIENT}/result_{client_counter}.zip", 'r') as zip_ref:
+                    zip_ref.extractall(f"{PATH_MODEL_FROM_CLIENT}")
                 
                 # move file to model_from_client
-                shutil.move(f"{MODEL_FROM_CLIENT}/client/model_send_to_server/eval_list.pkl",f"{MODEL_FROM_CLIENT}/eval_list_{client_counter}.pkl")
-                shutil.move(f"{MODEL_FROM_CLIENT}/client/model_send_to_server/model.pt",f"{MODEL_FROM_CLIENT}/model_{client_counter}.pt")
-                shutil.rmtree(f"{MODEL_FROM_CLIENT}/client")
-                os.remove(f"{MODEL_FROM_CLIENT}/result_{client_counter}.zip")
+                shutil.move(f"{PATH_MODEL_FROM_CLIENT}/client/model_send_to_server/eval_list.pkl",f"{PATH_MODEL_FROM_CLIENT}/eval_list_{client_counter}.pkl")
+                shutil.move(f"{PATH_MODEL_FROM_CLIENT}/client/model_send_to_server/model.pt",f"{PATH_MODEL_FROM_CLIENT}/model_{client_counter}.pt")
+                shutil.rmtree(f"{PATH_MODEL_FROM_CLIENT}/client")
+                os.remove(f"{PATH_MODEL_FROM_CLIENT}/result_{client_counter}.zip")
 
-                server.add_client(f'{MODEL_FROM_CLIENT}/model_{client_counter}.pt', f'{MODEL_FROM_CLIENT}/eval_list_{client_counter}.pkl')
+                server.add_client(f'{PATH_MODEL_FROM_CLIENT}/model_{client_counter}.pt', f'{PATH_MODEL_FROM_CLIENT}/eval_list_{client_counter}.pkl')
 
                 # update client counter
                 client_counter += 1
@@ -131,10 +134,12 @@ class AggregatedModel(APIView):
 
             log_round_path = f'server/log/log_dict_round_{round}'
             if not os.path.exists(log_round_path):
-                os.mkdir(log_round_path)
+                if not os.path.exists(LOG_PATH):
+                    os.mkdir(LOG_PATH)
             else:
-                shutil.rmtree(log_round_path)
-                os.mkdir(log_round_path)
+                shutil.rmtree(LOG_PATH)
+                os.mkdir(LOG_PATH)
+            os.mkdir(log_round_path)
                 
             log_file_path = f"server/log/log_dict_round_{round}/log.pkl"
             with open(log_file_path, 'wb') as f:
