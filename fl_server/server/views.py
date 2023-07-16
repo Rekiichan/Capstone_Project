@@ -1,23 +1,23 @@
-import shutil
-import zipfile
+# function utils
+import shutil, zipfile, os, copy, torch, pickle, json
 from pathlib import Path
-import requests
-import os
-import copy
-import torch
-import pickle
-import requests
-import json
+
+# django template lib
 from django.http import HttpResponse
-from rest_framework import status
-from rest_framework.response import Response
 from django.shortcuts import render
 from django.views.generic import TemplateView
+
+# API lib
+from rest_framework import status
+from rest_framework.response import Response
 from rest_framework.views import APIView
+
+# server function import
 from server.models import *
 from server.utils.const import *
 from server.handle_function.server import Server
 from server.handle_function.server_running import predict
+from server.handle_function.handle_view import send_file_via_api
 from server.utils.models import create_cnn_model
 
 class Home(TemplateView):
@@ -63,11 +63,7 @@ def DetailClient(request):
 def RemoveClient(request):
     pass
 
-def send_file_via_api(file_path, api_url):
-    with open(file_path, 'rb') as file:
-        files = {'file': file}
-        response = requests.post(api_url, files=files)
-        return response
+
 
 class AggregatedModel(APIView):
     def post(self,request):
@@ -153,7 +149,6 @@ class AggregatedModel(APIView):
         for client in list_client:
             api_url = 'http://' + client.ip_address + ":" + client.port + '/udpate-global-model'
             response = send_file_via_api(GLOBAL_MODEL_PATH, api_url)
-            print(response.status_code)
         
         return Response(status=status.HTTP_200_OK)
         
@@ -170,4 +165,5 @@ class Predict(APIView):
         path = os.path.join(Path(__file__).resolve().parent.parent,GLOBAL_MODEL_PATH)
         result = predict(path,f"{PREDICT_PATH}/file.png")
         return Response(data=result,status=status.HTTP_200_OK)
+
 
