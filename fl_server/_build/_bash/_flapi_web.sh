@@ -47,7 +47,7 @@ function flapi_web_step_2_build_image() {
   show_msg_text "[STEP 2/3]: Build image"
   call_flapi_web_get_source_code_path
 
-  docker build -f Dockerfile.apiweb.local "${SOURCE_CODE_PATH}" -t c9vioet/${DOCKER_API_WEB_IMAGE_NAME} --no-cache
+  docker build -f Dockerfile.apiweb.local "${SOURCE_CODE_PATH}" -t c9violet/${DOCKER_API_WEB_IMAGE_NAME} --no-cache
   check_exists_docker_image_by_name ${DOCKER_API_WEB_IMAGE_NAME}
 
   if (($? == 1)); then
@@ -109,8 +109,8 @@ function flapi_web_step_3_create_container_linux() {
     #2. Tạo akpapi_web container
     #2.1 Tạo mới akpapi_web container
     call_flapi_web_get_source_code_path
-    echo "docker run -ti --name ${DOCKER_API_WEB_CONTAINER_NAME} --net=${DOCKER_API_DB_NET_WORK} --hostname=${DOCKER_API_WEB_HOST} -d -v ${DOCKER_API_WEB_VOLUME_NAME}:/${DOCKER_API_WEB_VOLUME_NAME} -v "${SOURCE_CODE_PATH}/source_code":/fl -p ${DOCKER_API_WEB_HOST_PORT}:${DOCKER_API_WEB_MACHINE_PORT} ${DOCKER_API_WEB_IMAGE_NAME}:${DOCKER_API_WEB_IMAGE_VERSION}"
-    docker run -ti --name ${DOCKER_API_WEB_CONTAINER_NAME} --net=${DOCKER_API_DB_NET_WORK} --hostname=${DOCKER_API_WEB_HOST} -d -v ${DOCKER_API_WEB_VOLUME_NAME}:/${DOCKER_API_WEB_VOLUME_NAME} -v "${SOURCE_CODE_PATH}/source_code":/fl -p ${DOCKER_API_WEB_HOST_PORT}:${DOCKER_API_WEB_MACHINE_PORT} ${DOCKER_API_WEB_IMAGE_NAME}:${DOCKER_API_WEB_IMAGE_VERSION}
+    echo "docker run -ti --name ${DOCKER_API_WEB_CONTAINER_NAME} --net=${DOCKER_API_DB_NET_WORK} --hostname=${DOCKER_API_WEB_HOST} -d -v ${DOCKER_API_WEB_VOLUME_NAME}:/${DOCKER_API_WEB_VOLUME_NAME} -v "${SOURCE_CODE_PATH}/source_code":/fl -p ${DOCKER_API_WEB_HOST_PORT}:${DOCKER_API_WEB_MACHINE_PORT} c9violet/${DOCKER_API_WEB_IMAGE_NAME}:${DOCKER_API_WEB_IMAGE_VERSION}"
+    docker run -ti --name ${DOCKER_API_WEB_CONTAINER_NAME} --net=${DOCKER_API_DB_NET_WORK} --hostname=${DOCKER_API_WEB_HOST} -d -v ${DOCKER_API_WEB_VOLUME_NAME}:/${DOCKER_API_WEB_VOLUME_NAME} -v "${SOURCE_CODE_PATH}/source_code":/fl -p ${DOCKER_API_WEB_HOST_PORT}:${DOCKER_API_WEB_MACHINE_PORT} c9violet/${DOCKER_API_WEB_IMAGE_NAME}:${DOCKER_API_WEB_IMAGE_VERSION}
 
     #2.2 Kiểm tra kết quả
     check_exists_docker_container_by_name $DOCKER_API_WEB_CONTAINER_NAME
@@ -151,7 +151,7 @@ function flapi_web_step_3_create_container_window() {
     #2.1 Tạo mới akpapi_web container
     # call_flapi_web_get_source_code_path
 
-    docker run -ti --restart always --name ${DOCKER_API_WEB_CONTAINER_NAME} --net=${DOCKER_API_DB_NET_WORK} --hostname=${DOCKER_API_WEB_HOST} -d -v ${DOCKER_API_WEB_VOLUME_NAME}:/${DOCKER_API_WEB_VOLUME_NAME} -v "${DOCKER_VOLUME_PATH_WINDOW}":/fl -p ${DOCKER_API_WEB_HOST_PORT}:${DOCKER_API_WEB_MACHINE_PORT} ${DOCKER_API_WEB_IMAGE_NAME}:${DOCKER_API_WEB_IMAGE_VERSION}
+    docker run -ti --restart always --name ${DOCKER_API_WEB_CONTAINER_NAME} --net=${DOCKER_API_DB_NET_WORK} --hostname=${DOCKER_API_WEB_HOST} -d -v ${DOCKER_API_WEB_VOLUME_NAME}:/${DOCKER_API_WEB_VOLUME_NAME} -v "${DOCKER_VOLUME_PATH_WINDOW}":/fl -p ${DOCKER_API_WEB_HOST_PORT}:${DOCKER_API_WEB_MACHINE_PORT} c9violet/${DOCKER_API_WEB_IMAGE_NAME}:${DOCKER_API_WEB_IMAGE_VERSION}
     echo ${DOCKER_API_WEB_VOLUME_NAME}
     #2.2 Kiểm tra kết quả
     check_exists_docker_container_by_name $DOCKER_API_WEB_CONTAINER_NAME

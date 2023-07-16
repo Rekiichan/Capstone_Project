@@ -36,7 +36,7 @@ function flapi_db_step_1_cleanup() {
 function flapi_db_step_2_build_image() {
   show_msg_text "[STEP 2/3]: Build image"
   call_flapi_web_get_source_code_path
-  docker build -f Dockerfile.apidb.local ${SOURCE_CODE_PATH} -t c9vioet/${DOCKER_API_DB_IMAGE_NAME} --no-cache
+  docker build -f Dockerfile.apidb.local ${SOURCE_CODE_PATH} -t c9violet/${DOCKER_API_DB_IMAGE_NAME} --no-cache
   check_exists_docker_image_by_name ${DOCKER_API_DB_IMAGE_NAME}
 
   if (($? == 1)); then
@@ -99,8 +99,8 @@ function flapi_db_step_3_create_container() {
 
     #2. Tạo growme_db container
     #2.1 Tạo mới growme_db container
-    docker run -d -ti --name ${DOCKER_API_DB_CONTAINER_NAME} --net=${DOCKER_API_DB_NET_WORK} --hostname=${DOCKER_API_DB_HOST} -d -v ${DOCKER_API_DB_VOLUME_NAME}:/var/lib/mysql -p ${DOCKER_API_DB_HOST_PORT}:${DOCKER_API_DB_MACHINE_PORT} ${DOCKER_API_DB_IMAGE_NAME}:${DOCKER_API_DB_IMAGE_VERSION} --character-set-server=utf8 --collation-server=utf8_unicode_ci
-    echo "docker run -d -ti --name ${DOCKER_API_DB_CONTAINER_NAME} --net=${DOCKER_API_DB_NET_WORK} --hostname=${DOCKER_API_DB_HOST} -d -v ${DOCKER_API_DB_VOLUME_NAME}:/var/lib/mysql -p ${DOCKER_API_DB_HOST_PORT}:${DOCKER_API_DB_MACHINE_PORT} ${DOCKER_API_DB_IMAGE_NAME}:${DOCKER_API_DB_IMAGE_VERSION} --character-set-server=utf8 --collation-server=utf8_unicode_ci"
+    docker run -d -ti --name ${DOCKER_API_DB_CONTAINER_NAME} --net=${DOCKER_API_DB_NET_WORK} --hostname=${DOCKER_API_DB_HOST} -d -v ${DOCKER_API_DB_VOLUME_NAME}:/var/lib/mysql -p ${DOCKER_API_DB_HOST_PORT}:${DOCKER_API_DB_MACHINE_PORT} c9violet/${DOCKER_API_DB_IMAGE_NAME}:${DOCKER_API_DB_IMAGE_VERSION} --character-set-server=utf8 --collation-server=utf8_unicode_ci
+    echo "docker run -d -ti --name ${DOCKER_API_DB_CONTAINER_NAME} --net=${DOCKER_API_DB_NET_WORK} --hostname=${DOCKER_API_DB_HOST} -d -v ${DOCKER_API_DB_VOLUME_NAME}:/var/lib/mysql -p ${DOCKER_API_DB_HOST_PORT}:${DOCKER_API_DB_MACHINE_PORT} c9violet/${DOCKER_API_DB_IMAGE_NAME}:${DOCKER_API_DB_IMAGE_VERSION} --character-set-server=utf8 --collation-server=utf8_unicode_ci"
 
     #2.2 Kiểm tra kết quả
     check_exists_docker_container_by_name $DOCKER_API_DB_CONTAINER_NAME
