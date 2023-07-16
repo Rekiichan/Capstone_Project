@@ -7,7 +7,6 @@
 # fl_server/log/*
 # fl_server/model_from_client/*
 
-.env
 *.pt
 *.pkl
 *.zip

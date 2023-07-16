@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div class='card m-3'>
+    <div class='card-body m-2'>
+        <h2 style='font-weight: bold !important;'>Training Setting</h2>
+        <div class='form-control row form'>
+            {% csrf_token %}
+            <div class='col-12'>
+                <div class='col-3'>
+                    <label for="dataset_name">Dataset name:</label>
+                </div>
+
+                <div class='col-9'>
+                    <input type="text" id="dataset_name" name="dataset_name" value="{{settings.dataset_name}}">
+                </div>
+            </div>
+
+            <div class='col-12'>
+                <div class='col-3'>
+                    <label for="epoch">Epoch:</label>
+                </div>
+
+                <div class='col-9'>
+                    <input type="text" id="epoch" name="epoch" value="{{settings.epoch}}">
+                </div>
+            </div>
+
+            <div class='col-12'>
+                <div class='col-3'>
+                    <label for="round">Round:</label>
+                </div>
+
+                <div class='col-9'>
+                    <input type="text" id="round" name="round" value="{{settings.round}}">
+                </div>
+            </div>
+
+            <div class='col-12'>
+                <div class='col-3'>
+                    <label for="batch">Batch:</label>
+                </div>
+
+                <div class='col-9'>
+                    <input type="text" id="batch" name="batch" value="{{settings.batch}}">
+                </div>
+            </div>
+
+            <div class='col-12'>
+                <div class='col-3'>
+                    <label for="learning_rate">Learning rate:</label>
+                </div>
+
+                <div class='col-9'>
+                    <input type="text" id="learning_rate" name="learning_rate" value="{{settings.learning_rate}}">
+                </div>
+            </div>
+
+            <div class='col-12'>
+                <div class='col-3'>
+                    <label for="percentage_of_dataset">Percentage of Dataset:</label>
+                </div>
+
+                <div class='col-9'>
+                    <input type="text" id="percentage_of_dataset" name="percentage_of_dataset" value="{{settings.percentage_of_dataset}}">
+                </div>
+            </div>
+
+            <div class='col-12'>
+                <div class='col-3'>
+                    <label for="mode">Mode:</label>
+                </div>
+
+                <div class='col-9'>
+                    <input type="text" id="mode" name="mode" value="{{settings.mode}}">
+                </div>
+            </div>
+
+
+            <button 
+            class='btn border shadow-sm mt-3 bg-light border' style='width:200px !important; background-color: gray !important; color:white !important;' 
+            type="submit" onclick='get_data_form()' value="Submit">Submit</button>
+            <span class='text-danger' id='message'></span>
+        </div>
+    </div>
+</div>
+
+<script>
+  function get_data_form() {
+      var dataset_name = $('#dataset_name').val();
+      var epoch = $('#epoch').val();
+      var round = $('#round').val();
+      var learning_rate = $('#learning_rate').val();
+      var percentage_of_dataset = $('#percentage_of_dataset').val();
+      var mode = $('#mode').val();
+      var batch = $('#batch').val();
+
+      var param = {
+          'dataset_name' : dataset_name,
+          'epoch' : epoch,
+          'round' : round,
+          'learning_rate' : learning_rate,
+          'percentage_of_dataset' : percentage_of_dataset,
+          'mode' : mode,
+          'batch' : batch,
+      }
+      ajax_request(param);
+  }
+
+  function ajax_request(param={}) {
+      $.ajax({
+          type: "POST",
+          headers: {
+              'X-CSRFToken': '{{csrf_token}}'
+          },
+          dataType: "json",
+          url: '{% url 'server:train_setting_edit' %}',
+          data: {
+              'params': JSON.stringify(param)
+          },
+          success: function(para) {
+              console.log(para);
+          },
+          error: function(para) {
+              console.log(para)
+          }
+      });
+      window.location.href = `{% url 'server:train_setting_index' %}`;
+
+  }
+
+</script>
+
+{% endblock %}

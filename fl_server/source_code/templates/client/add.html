@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div class='card m-3'>
+    <div class='card-body m-2'>
+        <h2 style='font-weight: bold !important;'>Add client</h2>
+        <div class='form-control row form'>
+            {% csrf_token %}
+            <div class='col-12'>
+                <div class='col-3'>
+                    <label for="name">Name:</label>
+                </div>
+
+                <div class='col-9'>
+                    <input type="text" id="name" name="name">
+                </div>
+            </div>
+
+            <div class='col-12'>
+                <div class='col-3'>
+                    <label for="ip_address">Ip Address:</label>
+                </div>
+
+                <div class='col-9'>
+                    <input type="text" id="ip_address" name="ip_address">
+                </div>
+            </div>
+
+            <div class='col-12'>
+                <div class='col-3'>
+                    <label for="port">Port:</label>
+                </div>
+
+                <div class='col-9'>
+                    <input type="text" id="port" name="port">
+                </div>
+            </div>
+
+            <input style='width:200px !important;' 
+            class='btn border shadow-sm mt-3 bg-light border' type="submit" onclick='get_data_form()' value="Submit">
+            <span class='text-danger' id='message'></span>
+        </div>
+    </div>
+</div>
+
+<script>
+    function get_data_form() {
+        var ip_address = $('#ip_address').val();
+        var port = $('#port').val();
+        var name = $('#name').val();
+        var param = {
+            'ip_address' : ip_address,
+            'port' : port,
+            'name' : name
+        }
+        console.log(param);
+        ajax_request(param);
+    }
+
+    function ajax_request(param={}) {
+        $.ajax({
+            type: "POST",
+            headers: {
+                'X-CSRFToken': '{{csrf_token}}'
+            },
+            dataType: "json",
+            url: '{% url 'server:add_client' %}',
+            data: {
+                'action':'add_new_client',
+                'params': JSON.stringify(param)
+            },
+            success: function(para) {
+                console.log(para);
+            },
+            error: function(para) {
+                console.log(para)
+            }
+        });
+        window.location.href = `{% url 'server:client_index' %}`;
+    }
+
+</script>
+
+{% endblock %}
