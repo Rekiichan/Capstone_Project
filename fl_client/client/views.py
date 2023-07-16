@@ -72,11 +72,13 @@ class Predict(APIView):
     
     file = request.FILES['file']
     if file:
+      if not os.path.exists(PREDICT_PATH):
+        os.mkdir(PREDICT_PATH)
       with open(f"{PREDICT_PATH}/file.png", 'wb') as destination:
         for chunk in file.chunks():
           destination.write(chunk)
-    path = os.path.join(Path(__file__).resolve().parent.parent,GLOBAL_MODEL_PATH)
-    result = predict(path,f"{PREDICT_PATH}/file.png")
+    model_predict_global = os.path.join(Path(__file__).resolve().parent.parent,GLOBAL_MODEL_PATH)
+    result = predict(model_predict_global,f"{PREDICT_PATH}/file.png")
     return Response(data=result,status=status.HTTP_200_OK)
 
 

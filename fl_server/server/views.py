@@ -159,6 +159,8 @@ class Predict(APIView):
         
         file = request.FILES['file']
         if file:
+            if not os.path.exists(PREDICT_PATH):
+                os.mkdir(PREDICT_PATH)
             with open(f"{PREDICT_PATH}/file.png", 'wb') as destination:
                 for chunk in file.chunks():
                     destination.write(chunk)
