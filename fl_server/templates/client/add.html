@@ -42,6 +42,7 @@
         </div>
     </div>
 </div>
+
 <script>
     function get_data_form() {
         var ip_address = $('#ip_address').val();
@@ -75,7 +76,6 @@
                 console.log(para)
             }
         });
-        console.log(123)
         window.location.href = `{% url 'server:client_index' %}`;
     }
 

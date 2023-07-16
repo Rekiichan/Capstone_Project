@@ -11,7 +11,7 @@ urlpatterns = [
     # client ClientManagement
     path('client', views.ClientManagement.as_view(), name='client_index'),
     path('client/add', views.AddClient, name='add_client'),
-    path('client/edit/<pk>', views.EditClient, name='edit_client'),
+    path('client/edit/<pk>', views.EditClient.as_view(), name='edit_client'),
     path('client/detail/<pk>', views.DetailClient, name='detail_client'),
     path('client/remove/<pk>', views.RemoveClient, name='remove_client'),
 

@@ -2,12 +2,6 @@
 
 {% block body %}
 
-
-{% comment %} <h6><a href=" {% url 'server:add_client' %} ">Add client</a></h6>
-<h6><a href=" {% url 'server:edit_client' %} ">Edit client</a></h6>
-<h6><a href=" {% url 'server:detail_client' %} ">Detail client</a></h6>
-<h6><a href=" {% url 'server:remove_client' %} ">Remove client</a></h6> {% endcomment %}
-
 <div class='card m-3'>
   <div class='card-body m-3'>
     <div class='row'>
@@ -65,8 +59,8 @@
                   Action
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                  <li><a class="dropdown-item" href="#">Edit</a></li>
-                  <li><a class="dropdown-item" href="#">Detail</a></li>
+                  <li><a class="dropdown-item" href="{% url 'server:edit_client' client.id %}">Edit</a></li>
+                  <li><a class="dropdown-item" href="">Detail</a></li>
                 </ul>
               </div>
 

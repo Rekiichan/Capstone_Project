@@ -79,8 +79,42 @@ def AddClient(request):
 
     return HttpResponse('fail', status = status.HTTP_400_BAD_REQUEST)    
 
-def EditClient(request):
-    pass
+class EditClient(TemplateView):
+    template_name = 'client/edit.html'
+
+    def _get_client_data_from_db(self,pk):
+        client = ClientHubspot.objects.filter(id=pk).first()
+        data_object = {}
+        data_object['id'] = client.id
+        data_object['name'] = client.name
+        data_object['ip_address'] = client.ip_address
+        data_object['port'] = client.port
+        data_object['created_date'] = client.created_date
+        data_object['is_active'] = str(client.is_active)
+            
+        return data_object
+
+    def post(self,request,pk):
+        params = json.loads(request.POST.get('params'))
+        print(type(params))
+        param_ip_address = params.get('ip_address')
+        param_port = params.get('port')
+        param_name = params.get('name')
+        param_is_active = True if params.get('is_active') == '1' else False
+
+        update_client = ClientHubspot.objects.filter(id=pk).first()
+        update_client.ip_address = param_ip_address
+        update_client.port = param_port
+        update_client.name = param_name
+        update_client.is_active = param_is_active
+        
+        update_client.save()
+        return HttpResponse('OK')
+
+    def get_context_data(self, pk,**kwargs):
+        context = super().get_context_data(**kwargs)
+        context['client'] = self._get_client_data_from_db(pk)
+        return context
 
 def DetailClient(request):
     pass
