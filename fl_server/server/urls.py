@@ -16,6 +16,8 @@ urlpatterns = [
 
     # train
     path('train',views.TrainManagement.as_view(), name='train_index'),
+    path('train-setting',views.TrainSetting.as_view(), name='train_setting_index'),
+    path('train-setting-edit',views.TrainSettingEdit.as_view(), name='train_setting_edit'),
     path('server-train',views.AggregatedModel.as_view(), name='server_train'),
     path('predict',views.Predict.as_view(),name='predict'),
 ]

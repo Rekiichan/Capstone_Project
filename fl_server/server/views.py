@@ -86,6 +86,70 @@ class TrainManagement(TemplateView):
         context = super().get_context_data(**kwargs)
         return context
 
+class TrainSetting(TemplateView):
+    template_name = "train/setting_index.html"
+
+    def _get_setting_train(self):
+        train_info = TrainInfo.objects.filter().first()
+        data_object = {}
+        data_object['id'] = train_info.id
+        data_object['dataset_name'] = train_info.dataset_name
+        data_object['epoch'] = train_info.epoch
+        data_object['round'] = train_info.round
+        data_object['learning_rate'] = train_info.learning_rate
+        data_object['percentage_of_dataset'] = train_info.percentage_of_dataset
+        data_object['mode'] = train_info.mode
+            
+        return data_object
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['settings'] = self._get_setting_train()
+        return context
+
+class TrainSettingEdit(TemplateView):
+    template_name = "train/setting_edit.html"
+
+    def _get_setting_train(self):
+        train_info = TrainInfo.objects.filter().first()
+        data_object = {}
+        data_object['id'] = train_info.id
+        data_object['dataset_name'] = train_info.dataset_name
+        data_object['epoch'] = train_info.epoch
+        data_object['round'] = train_info.round
+        data_object['learning_rate'] = train_info.learning_rate
+        data_object['percentage_of_dataset'] = train_info.percentage_of_dataset
+        data_object['mode'] = train_info.mode
+        data_object['batch'] = train_info.batch
+            
+        return data_object
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['settings'] = self._get_setting_train()
+        return context
+    
+    def post(self,request):
+        params = json.loads(request.POST.get('params'))
+        param_dataset_name = params.get('dataset_name')
+        param_epoch = params.get('epoch')
+        param_round = params.get('round')
+        param_learning_rate = params.get('learning_rate')
+        param_percentage_of_dataset = params.get('percentage_of_dataset')
+        param_mode = params.get('mode')
+        param_batch = params.get('batch')
+
+        train_info = TrainInfo.objects.filter().first()
+        train_info.dataset_name = param_dataset_name
+        train_info.epoch = int(param_epoch)
+        train_info.round = int(param_round)
+        train_info.batch = int(param_batch)
+        train_info.learning_rate = float(param_learning_rate)
+        train_info.percentage_of_dataset = float(param_percentage_of_dataset)
+        train_info.mode = param_mode
+        train_info.save()
+
+        return HttpResponse('OK')
 
 class EditClient(TemplateView):
     template_name = 'client/edit.html'
@@ -104,7 +168,6 @@ class EditClient(TemplateView):
 
     def post(self,request,pk):
         params = json.loads(request.POST.get('params'))
-        print(type(params))
         param_ip_address = params.get('ip_address')
         param_port = params.get('port')
         param_name = params.get('name')

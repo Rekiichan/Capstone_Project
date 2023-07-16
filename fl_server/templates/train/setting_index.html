@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<div class='card m-3'>
+  <div class='card-body m-3'>
+    <div class='row'>
+        <div class='col-12'>
+            <h2 class='col-3'>Client Management</h2>
+            <button type='button' class='col-9 mb-3 float-end btn btn-secondary bg-secondary'>
+            <a href="{% url 'server:train_setting_edit' %}" class='float-end'>Edit training setting</a>
+            </button>
+        </div>
+    </div>
+    <table class='table table-hover'>
+      <thead class='table-primary p-1' style='background-color: gray !important;'>
+        <tr style='text-align:center;'>
+          <th>
+            Dataset Name
+          </th>
+          <th>
+            Epoch
+          </th>
+          <th>
+            Round
+          </th>
+          <th>
+            Learning Rate
+          </th>
+          <th>
+            Percentage of Dataset
+          </th>
+          <th>
+            Mode
+          </th>
+        </tr>
+      </thead>
+        <tbody>
+            <tr>
+                {% for key, setting in settings.items %}
+                    {% if key != 'id' %}
+                        <td style='text-align:center;'>{{setting}}</td>
+                    {% endif %}
+                {% endfor %}    
+            </tr>
+        </tbody>        
+    </table>
+  </div>
+</div>
+
+
+{% endblock %}
