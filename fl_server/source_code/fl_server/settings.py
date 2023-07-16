@@ -69,11 +69,11 @@ WSGI_APPLICATION = 'fl_server.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', 
-        'NAME': env('DATABASE_NAME'),
-        'USER': env('DATABASE_USER'),
-        'PASSWORD': env('DATABASE_PASS'),
-        'HOST': env('DATABASE_HOST'),
-        'PORT': env('DATABASE_PORT'),
+        'NAME': 'fdhealth',
+        'USER': 'root',
+        'PASSWORD': 'vangdoan2',
+        'HOST': 'fdhealth.site',
+        'PORT': '8200',
     }
 }
 
