@@ -1,0 +1,12 @@
+FROM --platform=linux/amd64 mysql:5.7   
+
+ENV MYSQL_HOST flapi_db
+ENV MYSQL_DATABASE flapi_db
+ENV MYSQL_ROOT_PASSWORD vangdoan2
+ENV TZ=Asia/Ho_Chi_Minh
+
+RUN mkdir /backup
+
+COPY _build/_setup/api_db/ /_setup/
+
+EXPOSE 3306
