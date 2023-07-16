@@ -160,7 +160,6 @@ class EditClient(TemplateView):
         data_object['id'] = client.id
         data_object['name'] = client.name
         data_object['ip_address'] = client.ip_address
-        data_object['port'] = client.port
         data_object['created_date'] = client.created_date
         data_object['is_active'] = str(client.is_active)
             
@@ -169,13 +168,11 @@ class EditClient(TemplateView):
     def post(self,request,pk):
         params = json.loads(request.POST.get('params'))
         param_ip_address = params.get('ip_address')
-        param_port = params.get('port')
         param_name = params.get('name')
         param_is_active = True if params.get('is_active') == '1' else False
 
         update_client = ClientHubspot.objects.filter(id=pk).first()
         update_client.ip_address = param_ip_address
-        update_client.port = param_port
         update_client.name = param_name
         update_client.is_active = param_is_active
         

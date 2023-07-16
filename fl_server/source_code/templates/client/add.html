@@ -26,16 +26,6 @@
                 </div>
             </div>
 
-            <div class='col-12'>
-                <div class='col-3'>
-                    <label for="port">Port:</label>
-                </div>
-
-                <div class='col-9'>
-                    <input type="text" id="port" name="port">
-                </div>
-            </div>
-
             <input style='width:200px !important;' 
             class='btn border shadow-sm mt-3 bg-light border' type="submit" onclick='get_data_form()' value="Submit">
             <span class='text-danger' id='message'></span>
@@ -46,14 +36,11 @@
 <script>
     function get_data_form() {
         var ip_address = $('#ip_address').val();
-        var port = $('#port').val();
         var name = $('#name').val();
         var param = {
             'ip_address' : ip_address,
-            'port' : port,
             'name' : name
         }
-        console.log(param);
         ajax_request(param);
     }
 

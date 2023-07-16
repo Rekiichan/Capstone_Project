@@ -19,13 +19,10 @@
             No
           </th>
           <th>
-            Unit Name
+            Unit
           </th>
           <th>
             Host Ip
-          </th>
-          <th>
-            Port
           </th>
           <th>
             Created Date
@@ -44,7 +41,6 @@
             <td>{{forloop.counter}}</td>
             <td>{{client.name}}</td>
             <td>{{client.ip_address}}</td>
-            <td>{{client.port}}</td>
             <td>{{client.created_date}}</td>
             
             {% if client.is_active == True %}
