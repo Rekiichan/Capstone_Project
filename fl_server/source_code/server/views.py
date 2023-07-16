@@ -216,7 +216,7 @@ class AggregatedModel(APIView):
         training_round = TrainInfo.objects.filter(is_used=0).first().round
         for round in range(1, training_round + 1):
             for client in list_client:
-                api_url = 'http://' + client.ip_address + ":" + client.port + '/train-request'
+                api_url = f"{client.ip_address}/train-request"
                 response = send_file_via_api(GLOBAL_MODEL_PATH, api_url)
  
                 # save updated model send from client               

@@ -58,6 +58,8 @@ class UpdateGlobalModel(APIView):
 
     file = request.FILES['file']
     if file:
+      if not os.path.exists('client/global_model'):
+        os.mkdir('client/global_model')
       with open(GLOBAL_MODEL_PATH, 'wb') as destination:
         for chunk in file.chunks():
             destination.write(chunk)
