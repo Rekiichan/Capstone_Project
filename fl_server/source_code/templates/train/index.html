@@ -24,7 +24,14 @@
   </div>
 </div>
 
+
+
 <script>
+
+  const spinner = `<div class="spinner-border" role="status">
+                    <span class="sr-only">Loading...</span>
+                  </div>`
+
   function request_train() {
       var training_number = $('#training_number').val();
       console.log(training_number);
@@ -54,6 +61,15 @@
             assert(value['Training Fail'])
           }
       });
+  }
+
+  function disableElement(id) {
+    $(`#${id}`).disabled = true;
+    $(`#${id}`).html = spinner;
+  }
+
+  function enableElement(id) {
+    $(`#${id}`).disabled = false;
   }
 </script>
 {% endblock %}

@@ -278,7 +278,7 @@ class AggregatedModel(APIView):
 
         # update global model for all client in system
         for client in list_client:
-            api_url = 'http://' + client.ip_address + ":" + client.port + '/udpate-global-model'
+            api_url = f"{client.ip_address}/udpate-global-model"
             response = send_file_via_api(GLOBAL_MODEL_PATH, api_url)
         
         return Response(status=status.HTTP_200_OK)
