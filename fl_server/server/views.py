@@ -116,11 +116,9 @@ class EditClient(TemplateView):
         context['client'] = self._get_client_data_from_db(pk)
         return context
 
-def DetailClient(request):
-    pass
-
-def RemoveClient(request):
-    pass
+def RemoveClient(request,pk):
+    ClientHubspot.objects.filter(id=pk).delete()
+    return HttpResponse('OK')
 
 class AggregatedModel(APIView):
     def post(self,request):

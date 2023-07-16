@@ -60,7 +60,7 @@
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                   <li><a class="dropdown-item" href="{% url 'server:edit_client' client.id %}">Edit</a></li>
-                  <li><a class="dropdown-item" href="">Detail</a></li>
+                  <li><a class="dropdown-item" href="{% url 'server:remove_client' client.id %}" target="_blank">Remove</a></li>
                 </ul>
               </div>
 
@@ -73,5 +73,6 @@
     </table>
   </div>
 </div>
+
 
 {% endblock %}
