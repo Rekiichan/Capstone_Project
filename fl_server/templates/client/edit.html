@@ -43,14 +43,15 @@
 
                 <div class='col-9'>
                     <select name="cars" id="active">
-                        <option {% if client.is_active == True %}selected{% endif %} value="1">Active</option>
-                        <option {% if client.is_active == False %}selected{% endif %} value="0">Inactive</option>
+                        <option {% if client.is_active == 'True' %}selected{% endif %} value="1">Active</option>
+                        <option {% if client.is_active == 'False' %}selected{% endif %} value="0">Inactive</option>
                     </select>
                 </div>
             </div>
 
-            <input style='width:200px !important;' 
-            class='btn border shadow-sm mt-3 bg-light border' type="submit" onclick='get_data_form()' value="Submit">
+            <button 
+            class='btn border shadow-sm mt-3 bg-light border' style='width:200px !important; background-color: gray !important; color:white !important;' 
+            type="submit" onclick='get_data_form()' value="Submit">Submit</button>
             <span class='text-danger' id='message'></span>
         </div>
     </div>

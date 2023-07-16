@@ -1,5 +1,5 @@
 # function utils
-import shutil, zipfile, os, copy, torch, pickle, json
+import shutil, zipfile, os, copy, torch, pickle, json, random
 from pathlib import Path
 
 # django template lib
@@ -79,6 +79,14 @@ def AddClient(request):
 
     return HttpResponse('fail', status = status.HTTP_400_BAD_REQUEST)    
 
+class TrainManagement(TemplateView):
+    template_name = "train/index.html"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
 class EditClient(TemplateView):
     template_name = 'client/edit.html'
 
@@ -122,13 +130,23 @@ def RemoveClient(request,pk):
 
 class AggregatedModel(APIView):
     def post(self,request):
+        params = json.loads(request.POST.get('params'))
+
+        param_train_number = params.get('training_number',1)
+        
         server = Server()
         CNNModel = create_cnn_model()
         server.server_model = copy.deepcopy(CNNModel)
         server.load_server_model(GLOBAL_MODEL_PATH)
 
         # train with multi client
-        list_client = ClientHubspot.objects.filter(is_active = 1)
+        list_client_id = list(ClientHubspot.objects.filter(is_active = 1).values_list('id',flat=True))
+
+        list_client_train_id = []
+        for i in range(int(param_train_number)):
+            list_client_train_id.append(random.choice(list_client_id))            
+        list_client = ClientHubspot.objects.filter(is_active = 1, id__in=list_client_id)
+        
         client_counter = 1
 
         # get round from db

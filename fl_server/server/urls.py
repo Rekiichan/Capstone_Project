@@ -15,6 +15,7 @@ urlpatterns = [
     path('client/remove/<pk>', views.RemoveClient, name='remove_client'),
 
     # train
+    path('train',views.TrainManagement.as_view(), name='train_index'),
     path('server-train',views.AggregatedModel.as_view(), name='server_train'),
     path('predict',views.Predict.as_view(),name='predict'),
 ]
