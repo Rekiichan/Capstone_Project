@@ -2,6 +2,55 @@
 
 {% block body %}
 
+
+<div class='card m-3'>
+  <div class='card-body m-3'>
+    <div class='row'>
+        <div class='col-12'>
+            <h2 class='col-6'>Server Center Setting Management</h2>
+            <button class='btn border shadow-sm mb-3 bg-light float-end' style='width:250px !important; background-color: gray !important;' 
+              type="submit" onclick='get_data_form()' value="Submit">
+              <a href="{% url 'server:train_setting_edit' %}" style='text-decoration:none; color:white !important; text-align:center !important;'>Edit setting server</a>
+            </button>
+        </div>
+    </div>
+    <table class='table table-hover'>
+      <thead class='table-primary p-1' style='background-color: gray !important;'>
+        <tr style='text-align:center;'>
+          <th>
+            Server Name
+          </th>
+          <th>
+            Host Ip
+          </th>
+          <th>
+            Created Date
+          </th>
+          <th>
+            Active Status
+          </th>
+        </tr>
+      </thead>
+        <tbody>
+            <tr>
+                {% for key, item in server.items %}
+                    {% if key == 'is_active' %}
+                      {% if item == True %}
+                        <td style='text-align:center !important;'><div style='text-align:center !important;' 
+                          class="badge bg-success">Active</div></td>
+                      {% else %}
+                        <td style='text-align:center !important;'><div class="badge bg-danger">Inactive</div></td>
+                      {% endif %}
+                    {% elif key != 'id' %}
+                        <td style='text-align:center;'>{{item}}</td>
+                    {% endif %}
+                {% endfor %}    
+            </tr>
+        </tbody>        
+    </table>
+  </div>
+</div>
+
 <div class='card m-3'>
   <div class='card-body m-3'>
     <div class='row'>

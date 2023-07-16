@@ -99,10 +99,22 @@ class TrainSetting(TemplateView):
         data_object['mode'] = train_info.mode
             
         return data_object
+    
+    def _get_server_info(self):
+        server_info = ServerHubspot.objects.filter().first()
+        data_object = {}
+        data_object['id'] = server_info.id
+        data_object['name'] = server_info.name
+        data_object['ip_address'] = server_info.ip_address
+        data_object['created_date'] = server_info.created_date
+        data_object['is_active'] = server_info.is_active
+        return data_object
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['settings'] = self._get_setting_train()
+        context['server'] = self._get_server_info()
+        print(context['server'])
         return context
 
 class TrainSettingEdit(TemplateView):
