@@ -368,8 +368,12 @@ class AggregatedModel(APIView):
         for client in list_client:
             print(f"==> Bắt đầu cập nhập tại {client.name}.....")
             api_url = f"{client.ip_address}/udpate-global-model"
-            response = send_file_via_api(GLOBAL_MODEL_PATH, api_url)
-            print(f"==> Cập nhập tại {client.name} thành công")
+            try: 
+                send_file_via_api(GLOBAL_MODEL_PATH, api_url)
+            except Exception as exc:
+                print(f"==> Cập nhập tại {client.name} Thất bại! Vui lòng kiểm tra lại kết nối")
+            else:
+                print(f"==> Cập nhập tại {client.name} Thành công")
         
         return Response(status=status.HTTP_200_OK)
         
