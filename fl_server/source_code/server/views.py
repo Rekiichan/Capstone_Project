@@ -1,5 +1,5 @@
 # function utils
-import shutil, zipfile, os, copy, torch, pickle, json, random
+import shutil, zipfile, os, copy, torch, pickle, json, random, threading
 from pathlib import Path
 
 # django template lib
@@ -230,6 +230,48 @@ def RemoveClient(request,pk):
     return HttpResponse('OK')
 
 class AggregatedModel(APIView):
+    def _client_run(self,server, client):
+        print(f'=== Client: {client.name}, ip address: {client.ip_address} ===')
+        print(f"a. Bắt đầu quá trình huấn luyện tại: {client.name}")
+
+        api_url = f"{client.ip_address}/train-request"
+        print(f"b. Gửi model khởi tạo và bắt đầu huấn luyện tại {client.name} ..............")
+        
+        response = send_file_via_api(GLOBAL_MODEL_PATH, api_url)
+        print(f"c. Huấn luyện thành công")
+
+        # save updated model send from client      
+        print(f"d. Lưu model đã được huấn luyện")
+        if not os.path.exists(PATH_MODEL_FROM_CLIENT):
+            os.mkdir(PATH_MODEL_FROM_CLIENT)
+
+        print(f"e. Xác định file zip chứa model")
+        file_path = f'{PATH_MODEL_FROM_CLIENT}/result_{client_counter}.zip'
+
+        with open(file_path, 'wb') as file:
+            file.write(response.content)
+        
+        # extract
+        print(f"f. Giải nén file zip lấy ra model")
+        with zipfile.ZipFile(f"{PATH_MODEL_FROM_CLIENT}/result_{client_counter}.zip", 'r') as zip_ref:
+            zip_ref.extractall(f"{PATH_MODEL_FROM_CLIENT}")
+
+        print(f"g. Giải nén thành công")
+        
+        # move file to model_from_client
+        shutil.move(f"{PATH_MODEL_FROM_CLIENT}/client/model_send_to_server/eval_list.pkl",f"{PATH_MODEL_FROM_CLIENT}/eval_list_{client_counter}.pkl")
+        shutil.move(f"{PATH_MODEL_FROM_CLIENT}/client/model_send_to_server/model.pt",f"{PATH_MODEL_FROM_CLIENT}/model_{client_counter}.pt")
+        shutil.rmtree(f"{PATH_MODEL_FROM_CLIENT}/client")
+        os.remove(f"{PATH_MODEL_FROM_CLIENT}/result_{client_counter}.zip")
+
+        print("h. Thêm model client vào thuật toán tổng hợp model")
+        server.add_client(f'{PATH_MODEL_FROM_CLIENT}/model_{client_counter}.pt', f'{PATH_MODEL_FROM_CLIENT}/eval_list_{client_counter}.pkl')
+        print("Thêm thành công")
+        # update client counter
+        client_counter += 1
+        
+        print(f"==> Kết thúc huấn luyện tại {client.name} thành công\n")
+    
     def post(self,request):
         params = json.loads(request.POST.get('params'))
         param_train_number = params.get('training_number',1)
@@ -268,57 +310,18 @@ class AggregatedModel(APIView):
         training_round = TrainInfo.objects.filter(is_used=0).first().round
         print(f"4. Bắt đầu thực hiện quá trình huấn luyện trong {training_round} rounds")
         for round in range(1, training_round + 1):
+            client_threading = []
             client_counter = 1
             print(f'Bắt đầu round {round}')
             for client in list_client:
-                print(f'Client: {client.name}, ip address: {client.ip_address}')
-                print(f"Bắt đầu quá trình huấn luyện tại: {client.name}")
+                thread = threading.Thread(target=self._client_run, args=(server,client))
+                thread.start()
+                client_threading.append(thread)
+            for thread_session in client_threading:
+                thread_session.join()
+            print(f"================ Kết thúc huấn luyện tại tất cả client ================ \n")
 
-                api_url = f"{client.ip_address}/train-request"
-                print(f"Gửi model khởi tạo và bắt đầu huấn luyện tại {client.name} ..............")
-                
-                response = send_file_via_api(GLOBAL_MODEL_PATH, api_url)
-                print(f"Huấn luyện thành công")
- 
-                # save updated model send from client      
-                print(f"Lưu model đã được huấn luyện")
-                if not os.path.exists(PATH_MODEL_FROM_CLIENT):
-                    os.mkdir(PATH_MODEL_FROM_CLIENT)
-
-                print(f"Xác định file zip chứa model")
-                file_path = f'{PATH_MODEL_FROM_CLIENT}/result_{client_counter}.zip'
-
-                with open(file_path, 'wb') as file:
-                    file.write(response.content)
-                
-                # extract
-                print(f"Giải nén file zip lấy ra model")
-                with zipfile.ZipFile(f"{PATH_MODEL_FROM_CLIENT}/result_{client_counter}.zip", 'r') as zip_ref:
-                    zip_ref.extractall(f"{PATH_MODEL_FROM_CLIENT}")
-
-                print(f"Giải nén thành công")
-                
-                # move file to model_from_client
-                shutil.move(f"{PATH_MODEL_FROM_CLIENT}/client/model_send_to_server/eval_list.pkl",f"{PATH_MODEL_FROM_CLIENT}/eval_list_{client_counter}.pkl")
-                shutil.move(f"{PATH_MODEL_FROM_CLIENT}/client/model_send_to_server/model.pt",f"{PATH_MODEL_FROM_CLIENT}/model_{client_counter}.pt")
-                shutil.rmtree(f"{PATH_MODEL_FROM_CLIENT}/client")
-                os.remove(f"{PATH_MODEL_FROM_CLIENT}/result_{client_counter}.zip")
-
-                print("Thêm model client vào thuật toán tổng hợp model")
-                server.add_client(f'{PATH_MODEL_FROM_CLIENT}/model_{client_counter}.pt', f'{PATH_MODEL_FROM_CLIENT}/eval_list_{client_counter}.pkl')
-                print("Thêm thành công")
-                # update client counter
-                client_counter += 1
-                
-                print(f"\nKết thúc huấn luyện tại {client.name} thành công\n")
-            print(f"Kết thúc huấn luyện tại tất cả client")
-            
-            # deo thay dung`
-            # eval_list = []
-            # for i in range(0, client_counter):
-            #     eval_list.append(server[i].get_eval_list())
-
-            print(f"Bắt đầu quá trình tổng hợp model trọng số")
+            print(f"================ Bắt đầu quá trình tổng hợp model trọng số ================")
             list_model_client=[]
             for i in range(0, client_counter-1):
                 list_model_client.append(server[i].get_model())
@@ -353,20 +356,20 @@ class AggregatedModel(APIView):
 
             # Save global model
             torch.save(aggregated_model, GLOBAL_MODEL_PATH)
-            print(f"Lưu global model thành công")
+            print(f"==> Lưu global model thành công")
             
-            print(f"\nKết thúc round {round} thành công\n")
+            print(f"==> Kết thúc round {round} thành công\n")
             
 
-        print("Hoàn thành quá trình huấn luyện học liên kết")
+        print("==> Hoàn thành quá trình huấn luyện học liên kết")
 
-        print("Cập nhập global model cho tất cả các client trong hệ thống")
+        print("==> Cập nhập global model cho tất cả các client trong hệ thống")
         # update global model for all client in system
         for client in list_client:
-            print(f"Bắt đầu cập nhập tại {client.name}.....")
+            print(f"==> Bắt đầu cập nhập tại {client.name}.....")
             api_url = f"{client.ip_address}/udpate-global-model"
             response = send_file_via_api(GLOBAL_MODEL_PATH, api_url)
-            print(f"Cập nhập tại {client.name} thành công")
+            print(f"==> Cập nhập tại {client.name} thành công")
         
         return Response(status=status.HTTP_200_OK)
         
