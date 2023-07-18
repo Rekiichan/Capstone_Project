@@ -225,48 +225,72 @@ class EditClient(TemplateView):
         return context
 
 def RemoveClient(request,pk):
+    print(f'========== REMOVE CLIENT ID: {pk} ==========')
     ClientHubspot.objects.filter(id=pk).delete()
     return HttpResponse('OK')
 
 class AggregatedModel(APIView):
     def post(self,request):
-        params = json.loads(request.POST.get('params'))
+        print("============================================================")
+        print("========= Bắt đầu thực hiện quá trình học liên kết =========")
+        print("============================================================\n")
 
+        print(f'========== Training {param_train_number} client ==========')
+        params = json.loads(request.POST.get('params'))
         param_train_number = params.get('training_number',1)
+        print(f'========== Training {param_train_number} client ==========')
         
         server = Server()
         CNNModel = create_cnn_model()
+        print('1. Khởi tạo server model thành công')
         server.server_model = copy.deepcopy(CNNModel)
         server.load_server_model(GLOBAL_MODEL_PATH)
+        print('2. Load server model thành công')
 
         # train with multi client
         list_client_id = list(ClientHubspot.objects.filter(is_active = 1).values_list('id',flat=True))
-
+        print("3. Bắt đầu lấy dữ liệu client")
         list_client_train_id = []
+        print(f"===> Danh sách client id hiện đang hoạt động trong hệ thống: {list_client_id}")
         for i in range(int(param_train_number)):
             list_client_train_id.append(random.choice(list_client_id))            
+        
+        print(f"===> Danh sách client id được chọn tham gia vào quá trình huấn luyện: {list_client_train_id}")
         list_client = ClientHubspot.objects.filter(is_active = 1, id__in=list_client_id)
         
         client_counter = 1
-
         # get round from db
         training_round = TrainInfo.objects.filter(is_used=0).first().round
+        print(f"4. Bắt đầu thực hiện quá trình huấn luyện trong {training_round} rounds")
         for round in range(1, training_round + 1):
+            print(f'Bắt đầu round {round}')
             for client in list_client:
+                print(f'Client: {client.name}, ip address: {client.ip_address}')
+                print(f"Bắt đầu quá trình huấn luyện tại: {client.name}")
+
                 api_url = f"{client.ip_address}/train-request"
+                print(f"Gửi model khởi tạo và bắt đầu huấn luyện tại {client.name} ..............")
+                
                 response = send_file_via_api(GLOBAL_MODEL_PATH, api_url)
+                print(f"Huấn luyện thành công")
  
-                # save updated model send from client               
+                # save updated model send from client      
+                print(f"Lưu model đã được huấn luyện")
                 if not os.path.exists(PATH_MODEL_FROM_CLIENT):
                     os.mkdir(PATH_MODEL_FROM_CLIENT)
+
+                print(f"Xác định file zip chứa model")
                 file_path = f'{PATH_MODEL_FROM_CLIENT}/result_{client_counter}.zip'
-                    
+
                 with open(file_path, 'wb') as file:
                     file.write(response.content)
                 
                 # extract
+                print(f"Giải nén file zip lấy ra model")
                 with zipfile.ZipFile(f"{PATH_MODEL_FROM_CLIENT}/result_{client_counter}.zip", 'r') as zip_ref:
                     zip_ref.extractall(f"{PATH_MODEL_FROM_CLIENT}")
+
+                print(f"Giải nén thành công")
                 
                 # move file to model_from_client
                 shutil.move(f"{PATH_MODEL_FROM_CLIENT}/client/model_send_to_server/eval_list.pkl",f"{PATH_MODEL_FROM_CLIENT}/eval_list_{client_counter}.pkl")
@@ -274,21 +298,28 @@ class AggregatedModel(APIView):
                 shutil.rmtree(f"{PATH_MODEL_FROM_CLIENT}/client")
                 os.remove(f"{PATH_MODEL_FROM_CLIENT}/result_{client_counter}.zip")
 
+                print("Thêm model client vào thuật toán tổng hợp model")
                 server.add_client(f'{PATH_MODEL_FROM_CLIENT}/model_{client_counter}.pt', f'{PATH_MODEL_FROM_CLIENT}/eval_list_{client_counter}.pkl')
-
+                print("Thêm thành công")
                 # update client counter
                 client_counter += 1
-
+                
+                print(f"\nKết thúc huấn luyện tại {client.name} thành công\n")
+            print(f"Kết thúc huấn luyện tại tất cả client")
+            
             # deo thay dung`
             # eval_list = []
             # for i in range(0, client_counter):
             #     eval_list.append(server[i].get_eval_list())
 
+            print(f"Bắt đầu quá trình tổng hợp model trọng số")
             list_model_client=[]
             for i in range(0, client_counter-1):
                 list_model_client.append(server[i].get_model())
                 
+            print(f"Thực hiện thuật toán FedBN để tổng hợp")
             aggregated_model = server.aggregate(list_model_client)
+            print(f"==> Tổng hợp thành công")
             
             # Compute average metrics
             train_loss, train_accuracy, test_loss, test_accuracy = server.metrics_avg()
@@ -316,12 +347,20 @@ class AggregatedModel(APIView):
 
             # Save global model
             torch.save(aggregated_model, GLOBAL_MODEL_PATH)
-            print(f"Global model saved to global_model.pt at round {round}")
+            print(f"Lưu global model thành công")
+            
+            print(f"\nKết thúc round {round} thành công\n")
+            
 
+        print("Hoàn thành quá trình huấn luyện học liên kết")
+
+        print("Cập nhập global model cho tất cả các client trong hệ thống")
         # update global model for all client in system
         for client in list_client:
+            print(f"Bắt đầu cập nhập tại {client.name}.....")
             api_url = f"{client.ip_address}/udpate-global-model"
             response = send_file_via_api(GLOBAL_MODEL_PATH, api_url)
+            print(f"Cập nhập tại {client.name} thành công")
         
         return Response(status=status.HTTP_200_OK)
         
