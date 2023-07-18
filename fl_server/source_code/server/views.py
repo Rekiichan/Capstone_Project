@@ -231,13 +231,13 @@ def RemoveClient(request,pk):
 
 class AggregatedModel(APIView):
     def post(self,request):
+        params = json.loads(request.POST.get('params'))
+        param_train_number = params.get('training_number',1)
         print("============================================================")
         print("========= Bắt đầu thực hiện quá trình học liên kết =========")
         print("============================================================\n")
 
         print(f'========== Training {param_train_number} client ==========')
-        params = json.loads(request.POST.get('params'))
-        param_train_number = params.get('training_number',1)
         print(f'========== Training {param_train_number} client ==========')
         
         server = Server()
@@ -252,17 +252,23 @@ class AggregatedModel(APIView):
         print("3. Bắt đầu lấy dữ liệu client")
         list_client_train_id = []
         print(f"===> Danh sách client id hiện đang hoạt động trong hệ thống: {list_client_id}")
-        for i in range(int(param_train_number)):
-            list_client_train_id.append(random.choice(list_client_id))            
+
+        number_choosed = 0
+        while number_choosed < int(param_train_number):
+            client_choosed = random.choice(list_client_id)
+            if client_choosed not in list_client_train_id:
+                list_client_train_id.append(client_choosed)
+                list_client_id.remove(client_choosed)
+                number_choosed += 1
         
         print(f"===> Danh sách client id được chọn tham gia vào quá trình huấn luyện: {list_client_train_id}")
-        list_client = ClientHubspot.objects.filter(is_active = 1, id__in=list_client_id)
-        
+        list_client = ClientHubspot.objects.filter(is_active = 1, id__in=list_client_train_id)
         client_counter = 1
         # get round from db
         training_round = TrainInfo.objects.filter(is_used=0).first().round
         print(f"4. Bắt đầu thực hiện quá trình huấn luyện trong {training_round} rounds")
         for round in range(1, training_round + 1):
+            client_counter = 1
             print(f'Bắt đầu round {round}')
             for client in list_client:
                 print(f'Client: {client.name}, ip address: {client.ip_address}')
