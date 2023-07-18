@@ -26,6 +26,7 @@ class TrainLocal(APIView):
   def post(self, request):
     # nhan file trong so tu server center
     if 'file' not in request.FILES:
+      print('Không nhận được model khởi tạo được gửi từ trung tâm tổng hợp')
       return Response(data='No file uploaded.',status=status.HTTP_400_BAD_REQUEST)
     
     file = request.FILES['file']
@@ -41,19 +42,22 @@ class TrainLocal(APIView):
     except Exception as exc:
       return Response(data=str(exc),status=status.HTTP_400_BAD_REQUEST)
     else:
+      print("Gửi model đã được huấn luyện tới trung tâm tổng hợp")
       if not os.path.exists(PATH_SEND_TO_SERVER):
         os.mkdir(PATH_SEND_TO_SERVER)
       with zipfile.ZipFile(ZIP_SEND_TO_SERVER,mode="a") as archive:
         archive.write(f"{PATH_SEND_TO_SERVER}/eval_list.pkl")
         archive.write(f"{PATH_SEND_TO_SERVER}/model.pt")
-
       response = FileResponse(open(ZIP_SEND_TO_SERVER, 'rb'), as_attachment=True)
+      print("Gửi thành công")
       return response
 
 class UpdateGlobalModel(APIView):
   def post(self,request):
+    print('Bắt đầu cập nhập global model được gửi từ trung tâm tổng hợp')
     # nhan file trong so tu server center
     if 'file' not in request.FILES:
+      print('Không tìm thấy model được gửi tới, vui lòng kiểm tra lại')
       return Response(data='No file uploaded.',status=status.HTTP_400_BAD_REQUEST)
 
     file = request.FILES['file']
@@ -63,6 +67,7 @@ class UpdateGlobalModel(APIView):
       with open(GLOBAL_MODEL_PATH, 'wb') as destination:
         for chunk in file.chunks():
             destination.write(chunk)
+      print('Cập nhập trọng số thành công')
       return Response(status=status.HTTP_200_OK)
     else:
       return Response(status=status.HTTP_400_BAD_REQUEST)

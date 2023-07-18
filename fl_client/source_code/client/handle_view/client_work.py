@@ -28,6 +28,7 @@ Output of clients inclule:
 def client_train():
   DICT_RETURN = {'success':True,'msg':"OK"}
   try:
+    print("Xác định thông tin huấn luyện model")
     train_info_from_db = TrainInfo.objects.filter().first()
     
     data_dir = DATASET_PATH # path of dataset
@@ -43,6 +44,7 @@ def client_train():
     # path of model client will save and send to server
     client_model_path = MODEL_SEND_TO_SERVER 
     
+    print('Khởi tạo module training tại local')
     # Initalize client instance
     client = Client(
       data_dir=data_dir,
@@ -58,6 +60,7 @@ def client_train():
     )
 
     # Load data
+    print("Load dữ liệu để huấn luyện")
     trainloader, validloader, num_examples = client.load_datasets()
 
     # # Model architecture from utils\model.py
@@ -65,6 +68,7 @@ def client_train():
     client.model = copy.deepcopy(CNNModel)
 
     # Fit model
+    print("Fit model")
     client.fit()
 
     # Evaluate model
@@ -76,7 +80,7 @@ def client_train():
       pickle.dump(eval_list, f)
     return DICT_RETURN 
   except Exception as exc:
-    print('triiger exceoption')
+    print('Xảy ra lỗi trong khi huấn luyện tại local, vui lòng kiểm tra lại')
     DICT_RETURN['success'] = False
     DICT_RETURN['msg'] = str(exc)
     return DICT_RETURN
