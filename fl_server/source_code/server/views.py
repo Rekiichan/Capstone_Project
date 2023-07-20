@@ -230,7 +230,7 @@ def RemoveClient(request,pk):
     return HttpResponse('OK')
 
 class AggregatedModel(APIView):
-    def _client_run(self,server, client):
+    def _client_run(self,server, client, client_counter):
         print(f'=== Client: {client.name}, ip address: {client.ip_address} ===')
         print(f"a. Bắt đầu quá trình huấn luyện tại: {client.name}")
 
@@ -314,7 +314,7 @@ class AggregatedModel(APIView):
             client_counter = 1
             print(f'Bắt đầu round {round}')
             for client in list_client:
-                thread = threading.Thread(target=self._client_run, args=(server,client))
+                thread = threading.Thread(target=self._client_run, args=(server,client,client_counter))
                 thread.start()
                 client_threading.append(thread)
             for thread_session in client_threading:
