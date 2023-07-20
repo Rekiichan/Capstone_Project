@@ -383,6 +383,7 @@ class Predict(TemplateView):
             return HttpResponse('No file uploaded')
         
         file = request.FILES['file']
+        file_path = request.POST.dict().get('file_name')
         if file:
             if not os.path.exists(PREDICT_PATH):
                 os.mkdir(PREDICT_PATH)
@@ -390,7 +391,7 @@ class Predict(TemplateView):
                 for chunk in file.chunks():
                     destination.write(chunk)
         path = os.path.join(Path(__file__).resolve().parent.parent,GLOBAL_MODEL_PATH)
-        result = predict(path,f"{PREDICT_PATH}/file.png")
+        result = predict(path,f"{PREDICT_PATH}/file.png",file_path)
         return HttpResponse(result)
 
 

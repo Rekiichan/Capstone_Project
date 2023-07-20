@@ -9,17 +9,27 @@
       <input class='btn border shadow-sm mt-3 bg-light border' style='background-color: gray !important; color:white !important;' 
       type="file" name="file" id='file-input'>
       <button class='btn border shadow-sm mt-3 bg-light border' style='background-color: gray !important; color:white !important;'
-      type="button" onclick=predict()>Upload</button>
+      type="button" onclick=predict(this)>Upload</button>
     </form>
   </div>
   <h2 id='result-predict' style='color: black !important;' class='m-3'></h2>
 </div>
 
 <script>
-  function predict() {
+  function predict(img) {
+    var file_path = document.getElementById('file-input').value;
+    var file_name_arr = [];
+    if (file_path.includes('\\')) {
+      file_name_arr = file_path.split('\\');
+    } else {
+      file_name_arr = file_path.split('/');
+    }
+     
+    console.log(file_name_arr[file_name_arr.length - 1])
     var formData = new FormData();
     var fileInput = $('#file-input')[0];
     formData.append('file', fileInput.files[0]);
+    formData.append('file_name', file_name_arr[file_name_arr.length - 1]);
     $.ajax({
       type: "POST",
       headers: {
