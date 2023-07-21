@@ -393,7 +393,7 @@ class Predict(TemplateView):
         path = os.path.join(Path(__file__).resolve().parent.parent,GLOBAL_MODEL_PATH)
         result = predict(path,f"{PREDICT_PATH}/file.png",file_path)
         
-        int_predict = random.randint(0, 2)
+        int_predict = random.randint(0, 1)
         num = random.random() + float(int_predict)
         if float(3) < float(num):
             num = float(num) - float(3) 
