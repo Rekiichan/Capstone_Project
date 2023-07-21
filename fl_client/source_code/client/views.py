@@ -1,6 +1,6 @@
 import os
 import zipfile
-import requests
+import requests, shutil
 from pathlib import Path
 from django.http import FileResponse
 from rest_framework.response import Response
@@ -38,13 +38,19 @@ class TrainLocal(APIView):
             destination.write(chunk)
     
     try:
+      if not os.path.exists(PATH_SEND_TO_SERVER):
+        print("Không tồn tại tệp gửi dữ liệu đến server => Bắt đầu tạo...")
+      else:
+        print("Đã tồn tại tệp gửi dữ liệu đến server => Bắt đầu xóa và tạo lại...")
+        shutil.rmtree(f"{PATH_SEND_TO_SERVER}")
+        print('=> Xóa thành công')
+      os.mkdir(PATH_SEND_TO_SERVER)
+      print("Tạo thành công")
       client_train()
     except Exception as exc:
       return Response(data=str(exc),status=status.HTTP_400_BAD_REQUEST)
     else:
       print("Gửi model đã được huấn luyện tới trung tâm tổng hợp")
-      if not os.path.exists(PATH_SEND_TO_SERVER):
-        os.mkdir(PATH_SEND_TO_SERVER)
       with zipfile.ZipFile(ZIP_SEND_TO_SERVER,mode="a") as archive:
         archive.write(f"{PATH_SEND_TO_SERVER}/eval_list.pkl")
         archive.write(f"{PATH_SEND_TO_SERVER}/model.pt")
