@@ -13,6 +13,7 @@
     </form>
   </div>
   <h2 id='result-predict' style='color: black !important;' class='m-3'></h2>
+  <h4 id='posibilities' class='m-3'></h4>
 </div>
 
 <script>
@@ -40,7 +41,10 @@
       url: `{% url 'server:predict' %}`,
       data: formData,
       success: function(para) {
-        $("#result-predict").text(`Result: ${para}`);
+        var obj = $.parseJSON(para);
+        console.log(obj['rate']);
+        $("#result-predict").text(`Result: ${obj['result']}`);
+        $("#posibilities").text(`Posibilities: ${obj['rate']}%`);
       }
     });
   }

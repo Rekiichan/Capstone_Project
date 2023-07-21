@@ -1,6 +1,7 @@
 import os
 import zipfile
 import requests, shutil
+import random
 from pathlib import Path
 from django.http import FileResponse
 from rest_framework.response import Response
@@ -92,6 +93,7 @@ class Predict(APIView):
           destination.write(chunk)
     model_predict_global = os.path.join(Path(__file__).resolve().parent.parent,GLOBAL_MODEL_PATH)
     result = predict(model_predict_global,f"{PREDICT_PATH}/file.png")
+
     return Response(data=result,status=status.HTTP_200_OK)
 
 
