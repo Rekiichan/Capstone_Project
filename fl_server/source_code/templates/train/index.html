@@ -51,12 +51,13 @@
               'action':'add_new_client',
               'params': JSON.stringify(param)
           },
-          success: function(para) {
+          success: function(data) {
             enableElement();
           },
-          error: function(para) {
+          error: function(data) {
           }
-      });
+        });
+
   }
 
   function disableElement() {

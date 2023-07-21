@@ -3,7 +3,7 @@ import shutil, zipfile, os, copy, torch, pickle, json, random, threading, random
 from pathlib import Path
 
 # django template lib
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views.generic import TemplateView
 
@@ -375,7 +375,8 @@ class AggregatedModel(APIView):
             else:
                 print(f"==> Cập nhập tại {client.name} Thành công")
         
-        return Response(status=status.HTTP_200_OK)
+        return JsonResponse({},status=status.HTTP_200_OK)
+    
         
 class Predict(TemplateView):
     def post(self,request):
